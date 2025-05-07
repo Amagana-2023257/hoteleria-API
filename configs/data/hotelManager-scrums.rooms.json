@@ -1,0 +1,46 @@
+[{
+  "_id": {
+    "$oid": "6816aa3b915133c6ddf20fa8"
+  },
+  "hotelId": {
+    "$oid": "6816aa52915133c6ddf20fac"
+  },
+  "type": "single",
+  "availability": "not available",
+  "price": 120888,
+  "description": "Comfortable double room with private bathroom and balconyomgomgomg.",
+  "availabilityDate": {
+    "$date": "2025-05-10T00:00:00.000Z"
+  },
+  "capacity": 3,
+  "status": true,
+  "createdAt": {
+    "$date": "2025-05-03T23:43:55.424Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-05T03:48:09.298Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6816aa76915133c6ddf20faf"
+  },
+  "hotelId": {
+    "$oid": "6816aa24915133c6ddf20fa5"
+  },
+  "type": "double",
+  "availability": "not available",
+  "price": 1208,
+  "description": "Comfortable double room with private bathroom and balcony.",
+  "availabilityDate": {
+    "$date": "2025-05-10T00:00:00.000Z"
+  },
+  "capacity": 2,
+  "status": true,
+  "createdAt": {
+    "$date": "2025-05-03T23:44:54.776Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-04T18:45:52.327Z"
+  }
+}]

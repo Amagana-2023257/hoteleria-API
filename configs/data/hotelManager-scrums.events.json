@@ -1,0 +1,50 @@
+[{
+  "_id": {
+    "$oid": "6816ac6e915133c6ddf20fc1"
+  },
+  "name": "Concierto en la terraza",
+  "description": "Música en vivo con artistas locales",
+  "date": {
+    "$date": "2025-05-30T00:00:00.000Z"
+  },
+  "type": "wedding",
+  "hotel": {
+    "$oid": "6816aa52915133c6ddf20fac"
+  },
+  "resources": [],
+  "status": "scheduled",
+  "createdBy": {
+    "$oid": "6816aa07915133c6ddf20f9a"
+  },
+  "createdAt": {
+    "$date": "2025-05-03T23:53:18.490Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-03T23:53:18.490Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6816ad51915133c6ddf20fc9"
+  },
+  "name": "Concierto en la terraza233332",
+  "description": "Música en vivo con artistas locales33",
+  "date": {
+    "$date": "2025-05-30T00:00:00.000Z"
+  },
+  "type": "conference",
+  "hotel": {
+    "$oid": "6816aa52915133c6ddf20fac"
+  },
+  "resources": [],
+  "status": "cancelled",
+  "createdBy": {
+    "$oid": "6816aa07915133c6ddf20f9a"
+  },
+  "createdAt": {
+    "$date": "2025-05-03T23:57:05.767Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-04T00:00:19.242Z"
+  }
+}]

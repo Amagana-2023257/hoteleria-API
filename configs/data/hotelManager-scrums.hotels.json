@@ -1,0 +1,69 @@
+[{
+  "_id": {
+    "$oid": "6816aa24915133c6ddf20fa5"
+  },
+  "name": "Hotel1",
+  "address": "12 avenida 6calle",
+  "category": "3 stars",
+  "description": "Descripcion de hotel.",
+  "phone": "58496512",
+  "email": "hotel@gmail.com",
+  "amenities": [],
+  "images": [],
+  "status": true,
+  "createdBy": {
+    "$oid": "6816aa07915133c6ddf20f9a"
+  },
+  "createdAt": {
+    "$date": "2025-05-03T23:43:32.482Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-03T23:43:32.482Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6816aa52915133c6ddf20fac"
+  },
+  "name": "HOTELLEDITT",
+  "address": "adfssaf",
+  "category": "4 stars",
+  "description": "asdfafsaaa",
+  "phone": "99999999",
+  "email": "hotelEdit@gmail.com",
+  "amenities": [],
+  "images": [],
+  "status": true,
+  "createdBy": {
+    "$oid": "6816aa07915133c6ddf20f9a"
+  },
+  "createdAt": {
+    "$date": "2025-05-03T23:44:18.391Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-04T18:29:43.232Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "6817b133a48dad0e175b6cfe"
+  },
+  "name": "Hotel3",
+  "address": "adsfasfasdfsa",
+  "category": "5 stars",
+  "description": "asdfasdfas",
+  "phone": "85854745",
+  "email": "hotel3@gmail.com",
+  "amenities": [],
+  "images": [],
+  "status": true,
+  "createdBy": {
+    "$oid": "6816aa07915133c6ddf20f9a"
+  },
+  "createdAt": {
+    "$date": "2025-05-04T18:25:55.639Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-04T18:25:55.639Z"
+  }
+}]

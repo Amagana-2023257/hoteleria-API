@@ -1,0 +1,59 @@
+[{
+  "_id": {
+    "$oid": "6816aa07915133c6ddf20f9a"
+  },
+  "name": "Admin",
+  "surname": "User",
+  "username": "admin",
+  "email": "admin@example.com",
+  "password": "$argon2id$v=19$m=65536,t=3,p=4$WOOzLPUZfTH0G5uAYebm6g$0BvDFR9TwSAzCQQ3HMLktMmLSNGz0b0vLeaOQXYImCc",
+  "phone": "12345678",
+  "role": "ADMIN_GLOBAL",
+  "status": true,
+  "createdAt": {
+    "$date": "2025-05-03T23:43:03.016Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-03T23:43:03.016Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68183268ac96b47042d2fc07"
+  },
+  "name": "Josue",
+  "surname": "Garcia",
+  "username": "username122",
+  "email": "josue@gmail.com",
+  "password": "$argon2id$v=19$m=65536,t=3,p=4$MFo8A1MUY1HKn1e+JrER9A$q+7z8jExza5/9dfEiSM2ozivRluKgTQYxVSzYu+jsw0",
+  "profilePicture": null,
+  "phone": "88888888",
+  "role": "USER_ROLE",
+  "status": true,
+  "createdAt": {
+    "$date": "2025-05-05T03:37:12.454Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-05T03:39:22.055Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68183309ac96b47042d2fc40"
+  },
+  "name": "David",
+  "surname": "Morente",
+  "username": "morente77",
+  "email": "morente@gmail.com",
+  "password": "$argon2id$v=19$m=65536,t=3,p=4$bo7uYw5TbMTDxpN0KlXGqw$MY/AKMqnC0i06ME9QQC5sCxjRqZ+JIAwNz/auXAl7YE",
+  "profilePicture": null,
+  "phone": "87458475",
+  "role": "USER_ROLE",
+  "status": true,
+  "createdAt": {
+    "$date": "2025-05-05T03:39:53.133Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-05T03:46:21.350Z"
+  }
+}]

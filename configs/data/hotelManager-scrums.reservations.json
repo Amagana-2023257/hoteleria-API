@@ -1,0 +1,58 @@
+[{
+  "_id": {
+    "$oid": "6817b5e0405abf8e46d9da33"
+  },
+  "userId": {
+    "$oid": "6816aa19915133c6ddf20fa0"
+  },
+  "hotelId": {
+    "$oid": "6816aa24915133c6ddf20fa5"
+  },
+  "roomId": {
+    "$oid": "6816aa76915133c6ddf20faf"
+  },
+  "checkInDate": {
+    "$date": "2025-06-17T00:00:00.000Z"
+  },
+  "checkOutDate": {
+    "$date": "2025-08-13T00:00:00.000Z"
+  },
+  "totalPrice": 68856,
+  "status": "reserved",
+  "services": [],
+  "createdAt": {
+    "$date": "2025-05-04T18:45:52.320Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-04T18:45:52.320Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "681834f9e4270d73284d619a"
+  },
+  "userId": {
+    "$oid": "68183309ac96b47042d2fc40"
+  },
+  "hotelId": {
+    "$oid": "6816aa52915133c6ddf20fac"
+  },
+  "roomId": {
+    "$oid": "6816aa3b915133c6ddf20fa8"
+  },
+  "checkInDate": {
+    "$date": "2025-04-28T00:00:00.000Z"
+  },
+  "checkOutDate": {
+    "$date": "2025-05-05T00:00:00.000Z"
+  },
+  "totalPrice": 846216,
+  "status": "reserved",
+  "services": [],
+  "createdAt": {
+    "$date": "2025-05-05T03:48:09.291Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-05T03:48:09.291Z"
+  }
+}]
