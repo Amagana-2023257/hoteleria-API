@@ -1,18 +1,19 @@
-// src/room/room.routes.js
 import { Router } from 'express';
 import {
   createRoom,
   getRooms,
   getRoomById,
   updateRoom,
-  deleteRoom
+  deleteRoom,
+  getRoomsByHotel
 } from './room.controller.js';
 import { validateJWT } from '../middlewares/validate-jwt.js';
 import { hasRoles }    from '../middlewares/validate-roles.js';
 import {
   createRoomValidator,
   updateRoomValidator,
- getRoomValidator
+  getRoomValidator,
+  getRoomsByHotelValidator
 } from '../middlewares/room-validators.js';
 
 const roomRouter = Router();
@@ -53,6 +54,15 @@ roomRouter.get(
   hasRoles('ADMIN_GLOBAL','ADMIN_HOTEL','ADMIN_SERVICE','USER_ROLE'),
   getRoomValidator,
   getRoomById
+);
+
+// Listar habitaciones por hotel
+roomRouter.get(
+  '/getRoomsByHotel/:hotelId',
+  validateJWT,
+  hasRoles('ADMIN_GLOBAL','ADMIN_HOTEL','ADMIN_SERVICE','USER_ROLE'),
+  getRoomsByHotelValidator,
+  getRoomsByHotel
 );
 
 export default roomRouter;

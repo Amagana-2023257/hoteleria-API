@@ -51,7 +51,6 @@ const userSchema = new Schema({
   timestamps: true
 });
 
-// Oculta campos sensibles y renombra _id a id
 userSchema.methods.toJSON = function() {
   const { _id, __v, password, ...user } = this.toObject();
   user.id = _id;

@@ -2,11 +2,13 @@
 import Room from './room.model.js';
 
 export const createRoom = async (req, res) => {
+  console.log('📦 createRoom payload:', req.body);      
   try {
     const room = await Room.create(req.body);
-    res.status(201).json({ message: 'Room created', room });
+    return res.status(201).json({ message: 'Room created', room });
   } catch (err) {
-    res.status(500).json({ message: 'Room creation failed', error: err.message });
+    console.error('❌ Room.create error:', err);      
+    return res.status(500).json({ message: 'Room creation failed', error: err.message });
   }
 };
 
@@ -49,5 +51,20 @@ export const deleteRoom = async (req, res) => {
     res.status(200).json({ message: 'Room deleted' });
   } catch (err) {
     res.status(500).json({ message: 'Room deletion failed', error: err.message });
+  }
+};
+export const getRoomsByHotel = async (req, res) => {
+  const { hotelId } = req.params;
+  console.log('📦 getRoomsByHotel hotelId:', hotelId);
+  try {
+    const rooms = await Room
+      .find({ hotel: hotelId })
+      .populate('hotel');
+    return res.status(200).json({ message: 'Rooms by hotel retrieved', rooms });
+  } catch (err) {
+    console.error('❌ getRoomsByHotel error:', err);
+    return res
+      .status(500)
+      .json({ message: 'Failed to fetch rooms by hotel', error: err.message });
   }
 };
