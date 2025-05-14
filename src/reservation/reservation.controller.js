@@ -11,7 +11,10 @@ export const createReservation = async (req, res) => {
 
 export const listReservations = async (req, res) => {
   try {
-    const resvs = await Reservation.find().populate('hotel room user');
+    const resvs = await Reservation.find()
+      .populate('user', 'name surname email') // Solo lo necesario
+      .populate('hotel', 'name')
+      .populate('room', 'number');
     return res.json({ reservations: resvs });
   } catch (e) {
     return res.status(500).json({ message: 'Error fetching reservations', error: e.message });
@@ -21,7 +24,10 @@ export const listReservations = async (req, res) => {
 export const getReservationById = async (req, res) => {
   try {
     const { id } = req.params;
-    const resv = await Reservation.findById(id).populate('hotel room user');
+    const resv = await Reservation.findById(id)
+      .populate('user', 'name surname email')
+      .populate('hotel', 'name')
+      .populate('room', 'number');
     if (!resv) return res.status(404).json({ message: 'Reservation not found' });
     return res.json({ reservation: resv });
   } catch (e) {

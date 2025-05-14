@@ -21,21 +21,21 @@ const eventRouter = Router();
 eventRouter.post(
   '/createEvent',
   validateJWT,
-  hasRoles('ADMIN_SERVICE','ADMIN_HOTEL'),
+  hasRoles('ADMIN_GLOBAL', 'ADMIN_SERVICE','ADMIN_HOTEL'),
   createEventValidator,
   createEvent
 );
 eventRouter.put(
   '/updateEvent/:id',
   validateJWT,
-  hasRoles('ADMIN_SERVICE','ADMIN_HOTEL'),
+  hasRoles('ADMIN_GLOBAL', 'ADMIN_SERVICE','ADMIN_HOTEL'),
   updateEventValidator,
   updateEvent
 );
 eventRouter.delete(
   '/deleteEvent/:id',
   validateJWT,
-  hasRoles('ADMIN_SERVICE','ADMIN_HOTEL'),
+  hasRoles('ADMIN_GLOBAL', 'ADMIN_SERVICE','ADMIN_HOTEL'),
   getEventValidator,
   deleteEvent
 );

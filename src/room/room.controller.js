@@ -2,12 +2,12 @@
 import Room from './room.model.js';
 
 export const createRoom = async (req, res) => {
-  console.log('📦 createRoom payload:', req.body);      
+  console.log('createRoom payload:', req.body);      
   try {
     const room = await Room.create(req.body);
     return res.status(201).json({ message: 'Room created', room });
   } catch (err) {
-    console.error('❌ Room.create error:', err);      
+    console.error('create error:', err);      
     return res.status(500).json({ message: 'Room creation failed', error: err.message });
   }
 };
