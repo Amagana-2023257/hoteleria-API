@@ -12,7 +12,8 @@ import { hasRoles } from '../middlewares/validate-roles.js';
 import {
   createHotelValidator,
   updateHotelValidator,
-  getHotelValidator
+  getHotelValidator,
+  deleteHotelValidator
 } from '../middlewares/hotel-validators.js';
 import { uploadHotelImages } from '../middlewares/multer-uploads.js';
 
@@ -20,7 +21,7 @@ const hotelRouter = Router();
 
 // ADMIN_GLOBAL: crear + subir imágenes
 hotelRouter.post(
-  '/createHotel',
+  '/hoteles',
   validateJWT,
   hasRoles('ADMIN_GLOBAL'),
   uploadHotelImages,
@@ -30,7 +31,7 @@ hotelRouter.post(
 
 // ADMIN_GLOBAL: actualizar + nuevas imágenes
 hotelRouter.put(
-  '/updateHotel/:id',
+  '/hoteles/:id',
   validateJWT,
   hasRoles('ADMIN_GLOBAL'),
   uploadHotelImages,
@@ -40,27 +41,37 @@ hotelRouter.put(
 
 // ADMIN_GLOBAL: eliminar
 hotelRouter.delete(
-  '/deleteHotel/:id',
+  '/hoteles/:id',
   validateJWT,
   hasRoles('ADMIN_GLOBAL'),
-  getHotelValidator,
+  deleteHotelValidator,
   deleteHotel
 );
 
-// Cualquiera con sesión
+// Cualquiera con sesión: listar hoteles
 hotelRouter.get(
-  '/getHotels',
+  '/hoteles',
   validateJWT,
   hasRoles('ADMIN_GLOBAL','ADMIN_HOTEL','ADMIN_SERVICE','USER_ROLE'),
   getHotels
 );
 
+// Cualquiera con sesión: detalle de hotel
 hotelRouter.get(
-  '/getHotel/:id',
+  '/hoteles/:id',
   validateJWT,
   hasRoles('ADMIN_GLOBAL','ADMIN_HOTEL','ADMIN_SERVICE','USER_ROLE'),
   getHotelValidator,
   getHotelById
+);
+
+// Consultar habitaciones de un hotel
+hotelRouter.get(
+  '/hoteles/:id/habitaciones',
+  validateJWT,
+  hasRoles('ADMIN_GLOBAL','ADMIN_HOTEL','ADMIN_SERVICE','USER_ROLE'),
+  getHotelValidator,
+  (req, res) => require('../room/room.controller.js').getRoomsByHotel(req, res)
 );
 
 export default hotelRouter;

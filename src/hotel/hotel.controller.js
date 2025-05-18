@@ -7,9 +7,7 @@ import Hotel from './hotel.model.js';
 export const createHotel = async (req, res) => {
   try {
     const uploaded = req.files || [];
-    const images = uploaded.map(file => {
-      return `/uploads/hotels/${file.filename}`;
-    });
+    const images = uploaded.map(file => `/uploads/hotels/${file.filename}`);
 
     const {
       name,
@@ -22,9 +20,19 @@ export const createHotel = async (req, res) => {
       availableRooms
     } = req.body;
 
-    // Validación mínima
-    if (!name || !location || !address || !category || price == null || availableRooms == null) {
-      return res.status(400).json({ message: 'Faltan campos obligatorios' });
+    // Validación de campos obligatorios
+    const missing = [];
+    if (!name) missing.push('name');
+    if (!location) missing.push('location');
+    if (!address) missing.push('address');
+    if (!category) missing.push('category');
+    if (price == null) missing.push('price');
+    if (availableRooms == null) missing.push('availableRooms');
+    if (missing.length) {
+      return res.status(400).json({
+        message: 'Faltan campos obligatorios',
+        missingFields: missing
+      });
     }
 
     const hotel = await Hotel.create({
@@ -32,16 +40,20 @@ export const createHotel = async (req, res) => {
       location: location.trim(),
       address: address.trim(),
       category,
-      price,
+      price: Number(price),
       amenities,
-      images,              
-      rating,
-      availableRooms
+      images,
+      rating: Number(rating),
+      availableRooms: Number(availableRooms)
     });
 
     return res.status(201).json({ message: 'Hotel creado', hotel });
   } catch (err) {
     console.error('Hotel creation error:', err);
+    if (err.name === 'ValidationError') {
+      const errors = Object.values(err.errors).map(e => e.message);
+      return res.status(400).json({ message: 'Error de validación', errors });
+    }
     return res.status(500).json({ message: 'Fallo al crear hotel', error: err.message });
   }
 };
@@ -95,13 +107,20 @@ export const updateHotel = async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
-    const hotel = await Hotel.findByIdAndUpdate(id, updates, { new: true, runValidators: true });
+    const hotel = await Hotel.findByIdAndUpdate(id, updates, {
+      new: true,
+      runValidators: true
+    });
     if (!hotel) {
       return res.status(404).json({ message: 'Hotel no encontrado' });
     }
     return res.status(200).json({ message: 'Hotel actualizado', hotel });
   } catch (err) {
     console.error('Update hotel error:', err);
+    if (err.name === 'ValidationError') {
+      const errors = Object.values(err.errors).map(e => e.message);
+      return res.status(400).json({ message: 'Error de validación', errors });
+    }
     return res.status(500).json({ message: 'Error al actualizar hotel', error: err.message });
   }
 };
