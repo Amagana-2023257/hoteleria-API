@@ -1,18 +1,44 @@
+// src/middlewares/reservation-validators.js
 import { body, param } from 'express-validator';
-import { validarCampos } from '../middlewares/validate-fields.js';
+import { validarCampos } from './validate-fields.js';
 
 export const createReservationValidator = [
-  body('user').isMongoId().withMessage('Invalid user ID'),
-  body('hotel').isMongoId().withMessage('Invalid hotel ID'),
-  body('room').isMongoId().withMessage('Invalid room ID'),
-  body('checkInDate').isISO8601().withMessage('Invalid check-in date'),
-  body('checkOutDate').isISO8601().withMessage('Invalid check-out date'),
+  body('user')
+    .notEmpty().withMessage('El usuario es obligatorio')
+    .isMongoId().withMessage('ID de usuario inválido'),
+  body('hotel')
+    .notEmpty().withMessage('El hotel es obligatorio')
+    .isMongoId().withMessage('ID de hotel inválido'),
+  body('room')
+    .notEmpty().withMessage('La habitación es obligatoria')
+    .isMongoId().withMessage('ID de habitación inválido'),
+  body('checkInDate')
+    .notEmpty().withMessage('La fecha de check-in es obligatoria')
+    .isISO8601().toDate().withMessage('Fecha de check-in inválida'),
+  body('checkOutDate')
+    .notEmpty().withMessage('La fecha de check-out es obligatoria')
+    .isISO8601().toDate().withMessage('Fecha de check-out inválida'),
+  body('status')
+    .optional()
+    .isIn(['Booked','CheckedIn','CheckedOut','Cancelled']).withMessage('Status inválido'),
   validarCampos
 ];
 
 export const updateReservationValidator = [
-  body('status').optional().isIn(['Booked','CheckedIn','CheckedOut','Cancelled']).withMessage('Invalid status'),
+  param('id')
+    .isMongoId().withMessage('ID de reservación inválido'),
+  body('checkInDate')
+    .optional().isISO8601().toDate().withMessage('Fecha de check-in inválida'),
+  body('checkOutDate')
+    .optional().isISO8601().toDate().withMessage('Fecha de check-out inválida'),
+  body('status')
+    .optional()
+    .isIn(['Booked','CheckedIn','CheckedOut','Cancelled']).withMessage('Status inválido'),
   validarCampos
 ];
 
-export const idParamValidator = [param('id').isMongoId().withMessage('Invalid ID'), validarCampos];
+export const idParamValidator = [
+  param('id')
+    .isMongoId().withMessage('ID de reservación inválido'),
+  validarCampos
+];

@@ -8,7 +8,7 @@ import {
   deleteReservation
 } from './reservation.controller.js';
 import { validateJWT } from '../middlewares/validate-jwt.js';
-import { hasRoles }    from '../middlewares/validate-roles.js';
+import { hasRoles } from '../middlewares/validate-roles.js';
 import {
   createReservationValidator,
   updateReservationValidator,
@@ -17,44 +17,46 @@ import {
 
 const reservationRouter = Router();
 
-// Creación por usuarios
+// Usuarios generales: realizar una reservación
 reservationRouter.post(
-  '/createReservation',
+  '/reservaciones',
   validateJWT,
   hasRoles('USER_ROLE'),
   createReservationValidator,
   createReservation
 );
 
-// Listar y ver solo admins de plataforma o de hotel
+// Administradores de plataforma y hotel: listar reservaciones
 reservationRouter.get(
-  '/getReservations',
+  '/reservaciones',
   validateJWT,
-  hasRoles('ADMIN_GLOBAL', 'ADMIN_HOTEL'),
+  hasRoles('ADMIN_GLOBAL','ADMIN_HOTEL'),
   listReservations
 );
+
+// Obtener reservación por ID
 reservationRouter.get(
-  '/getReservation/:id',
+  '/reservaciones/:id',
   validateJWT,
-  hasRoles('ADMIN_GLOBAL', 'ADMIN_HOTEL'),
+  hasRoles('ADMIN_GLOBAL','ADMIN_HOTEL','USER_ROLE'),
   idParamValidator,
   getReservationById
 );
 
-// Actualizar por admins
+// Administradores: actualizar reservación
 reservationRouter.put(
-  '/updateReservation/:id',
+  '/reservaciones/:id',
   validateJWT,
-  hasRoles('ADMIN_GLOBAL', 'ADMIN_HOTEL'),
+  hasRoles('ADMIN_GLOBAL','ADMIN_HOTEL'),
   updateReservationValidator,
   updateReservation
 );
 
-// Borrar reservas (usuario puede cancelar la suya, admins también)
+// Usuarios y administradores: cancelar reservación
 reservationRouter.delete(
-  '/deleteReservation/:id',
+  '/reservaciones/:id',
   validateJWT,
-  hasRoles('USER_ROLE', 'ADMIN_GLOBAL', 'ADMIN_HOTEL'),
+  hasRoles('USER_ROLE','ADMIN_GLOBAL','ADMIN_HOTEL'),
   idParamValidator,
   deleteReservation
 );
