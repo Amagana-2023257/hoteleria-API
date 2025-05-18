@@ -2,36 +2,68 @@
 import { body, param } from 'express-validator';
 import { validarCampos } from './validate-fields.js';
 
+// Validación para crear habitación
 export const createRoomValidator = [
   body('hotel')
+    .notEmpty().withMessage('El hotel es obligatorio')
     .isMongoId().withMessage('ID de hotel inválido'),
   body('type')
-    .notEmpty().withMessage('El tipo de habitación es requerido'),
+    .notEmpty().withMessage('El tipo de habitación es obligatorio')
+    .isString().withMessage('El tipo debe ser texto'),
+  body('description')
+    .optional()
+    .isString().withMessage('La descripción debe ser texto'),
   body('capacity')
-    .isInt({ gt: 0 }).withMessage('La capacidad debe ser un número entero mayor que 0'),
+    .notEmpty().withMessage('La capacidad es obligatoria')
+    .isInt({ min: 1 }).withMessage('La capacidad debe ser al menos 1'),
   body('price')
-    .isFloat({ gt: 0 }).withMessage('El precio debe ser un número mayor que 0'),
+    .notEmpty().withMessage('El precio es obligatorio')
+    .isFloat({ min: 0 }).withMessage('El precio no puede ser negativo'),
+  body('availability')
+    .optional()
+    .isIn(['available','not available']).withMessage('Disponibilidad inválida'),
+  body('availabilityDate')
+    .notEmpty().withMessage('La fecha de disponibilidad es obligatoria')
+    .isISO8601().toDate().withMessage('Fecha de disponibilidad inválida'),
   validarCampos
 ];
 
+// Validación para obtener habitación por ID
 export const getRoomValidator = [
-  param('id').isMongoId().withMessage('Invalid room ID'),
+  param('id')
+    .isMongoId().withMessage('ID de habitación inválido'),
   validarCampos
 ];
 
+// Validación para actualizar habitación
 export const updateRoomValidator = [
-  param('id').isMongoId().withMessage('Invalid room ID'),
-  body('type').optional().notEmpty().withMessage('Type is required'),
-  body('capacity').optional().isNumeric().withMessage('Capacity must be a number'),
-  body('price').optional().isNumeric().withMessage('Price must be a number'),
+  param('id')
+    .isMongoId().withMessage('ID de habitación inválido'),
+  body('hotel')
+    .optional()
+    .isMongoId().withMessage('ID de hotel inválido'),
+  body('type')
+    .optional()
+    .isString().withMessage('El tipo debe ser texto'),
+  body('description')
+    .optional()
+    .isString().withMessage('La descripción debe ser texto'),
+  body('capacity')
+    .optional()
+    .isInt({ min: 1 }).withMessage('La capacidad debe ser al menos 1'),
+  body('price')
+    .optional()
+    .isFloat({ min: 0 }).withMessage('El precio no puede ser negativo'),
+  body('availability')
+    .optional()
+    .isIn(['available','not available']).withMessage('Disponibilidad inválida'),
+  body('availabilityDate')
+    .optional()
+    .isISO8601().toDate().withMessage('Fecha de disponibilidad inválida'),
   validarCampos
 ];
 
-export const deleteRoomValidator = [
-  param('id').isMongoId().withMessage('Invalid room ID'),
-  validarCampos
-];
-
+// Validación para obtener habitaciones por hotel
 export const getRoomsByHotelValidator = [
   param('hotelId')
     .isMongoId().withMessage('ID de hotel inválido'),
