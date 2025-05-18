@@ -8,47 +8,50 @@ import {
   deleteEvent
 } from './event.controller.js';
 import { validateJWT } from '../middlewares/validate-jwt.js';
-import { hasRoles }    from '../middlewares/validate-roles.js';
+import { hasRoles } from '../middlewares/validate-roles.js';
 import {
   createEventValidator,
   updateEventValidator,
-   getEventValidator
+  getEventValidator
 } from '../middlewares/event-validators.js';
 
 const eventRouter = Router();
 
-// Solo ADMIN_SERVICE y ADMIN_HOTEL pueden gestionar eventos
+// ADMIN_SERVICE o ADMIN_HOTEL: gestionar eventos
 eventRouter.post(
-  '/createEvent',
+  '/eventos',
   validateJWT,
-  hasRoles('ADMIN_GLOBAL', 'ADMIN_SERVICE','ADMIN_HOTEL'),
+  hasRoles('ADMIN_GLOBAL','ADMIN_SERVICE','ADMIN_HOTEL'),
   createEventValidator,
   createEvent
 );
+
 eventRouter.put(
-  '/updateEvent/:id',
+  '/eventos/:id',
   validateJWT,
-  hasRoles('ADMIN_GLOBAL', 'ADMIN_SERVICE','ADMIN_HOTEL'),
+  hasRoles('ADMIN_GLOBAL','ADMIN_SERVICE','ADMIN_HOTEL'),
   updateEventValidator,
   updateEvent
 );
+
 eventRouter.delete(
-  '/deleteEvent/:id',
+  '/eventos/:id',
   validateJWT,
-  hasRoles('ADMIN_GLOBAL', 'ADMIN_SERVICE','ADMIN_HOTEL'),
+  hasRoles('ADMIN_GLOBAL','ADMIN_SERVICE','ADMIN_HOTEL'),
   getEventValidator,
   deleteEvent
 );
 
-// Todos con sesión pueden listar y ver
+// Todos con sesión: listar y detalle de eventos
 eventRouter.get(
-  '/getEvents',
+  '/eventos',
   validateJWT,
   hasRoles('ADMIN_GLOBAL','ADMIN_HOTEL','ADMIN_SERVICE','USER_ROLE'),
   getEvents
 );
+
 eventRouter.get(
-  '/getEvent/:id',
+  '/eventos/:id',
   validateJWT,
   hasRoles('ADMIN_GLOBAL','ADMIN_HOTEL','ADMIN_SERVICE','USER_ROLE'),
   getEventValidator,
