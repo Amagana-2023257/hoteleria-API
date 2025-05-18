@@ -5,12 +5,14 @@ const userSchema = new Schema({
   name: {
     type: String,
     required: [true, 'El nombre es requerido'],
-    maxlength: [50, 'El nombre no debe superar 50 caracteres']
+    maxlength: [50, 'El nombre no debe superar 50 caracteres'],
+    trim: true
   },
   surname: {
     type: String,
     required: [true, 'El apellido es requerido'],
-    maxlength: [50, 'El apellido no debe superar 50 caracteres']
+    maxlength: [50, 'El apellido no debe superar 50 caracteres'],
+    trim: true
   },
   email: {
     type: String,
@@ -35,7 +37,7 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ["ADMIN_GLOBAL", "ADMIN_HOTEL", "USER_ROLE", "ADMIN_SERVICE"],
+    enum: ['ADMIN_GLOBAL', 'ADMIN_HOTEL', 'USER_ROLE', 'ADMIN_SERVICE'],
     default: 'USER_ROLE'
   },
   status: {
@@ -44,6 +46,15 @@ const userSchema = new Schema({
   },
   profilePicture: {
     type: String,
+    default: null,
+    trim: true
+  },
+  passwordResetCode: {
+    type: String,
+    default: null
+  },
+  passwordResetExpires: {
+    type: Date,
     default: null
   }
 }, {
@@ -52,7 +63,7 @@ const userSchema = new Schema({
 });
 
 userSchema.methods.toJSON = function() {
-  const { _id, __v, password, ...user } = this.toObject();
+  const { _id, __v, password, passwordResetCode, passwordResetExpires, ...user } = this.toObject();
   user.id = _id;
   return user;
 };

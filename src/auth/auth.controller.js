@@ -1,25 +1,46 @@
+// src/controllers/auth.controller.js
 import { hash, verify } from 'argon2';
 import crypto from 'crypto';
+import path from 'path';
 import User from '../user/user.model.js';
 import { generateJWT } from '../helpers/generate-jwt.js';
 import { sendEmail } from '../helpers/send-email.js';
 
-// Registrar un nuevo usuario (sin profilePicture)
+/**
+ * Registrar un nuevo usuario (con profilePicture opcional)
+ */
 export const register = async (req, res) => {
   try {
-    const { name, surname, username, email, password, phone, role } = req.body;
-    const hashedPassword = await hash(password);
-
-    const user = await User.create({
+    const {
       name,
       surname,
       username,
       email,
-      password: hashedPassword,
+      password,
       phone,
       role
+    } = req.body;
+    // Hash de la contraseña
+    const hashedPassword = await hash(password);
+
+    // Procesar imagen de perfil si existe
+    let profilePicture = null;
+    if (req.file) {
+      profilePicture = `/uploads/profile-pictures/${req.file.filename}`;
+    }
+
+    const user = await User.create({
+      name: name.trim(),
+      surname: surname.trim(),
+      username: username.trim(),
+      email: email.toLowerCase().trim(),
+      password: hashedPassword,
+      phone: phone?.trim(),
+      role,
+      profilePicture
     });
 
+    // Generar token
     const userDetails = user.toJSON();
     const token = await generateJWT(userDetails.id);
 
@@ -41,17 +62,15 @@ export const register = async (req, res) => {
   }
 };
 
-// Login de usuario
+/**
+ * Login de usuario
+ */
 export const login = async (req, res) => {
   const { email, username, password } = req.body;
   try {
     const user = await User.findOne({ $or: [{ email }, { username }] });
-    if (!user) {
-      return res.status(400).json({ msg: 'Credenciales inválidas' });
-    }
-
-    if (!user.status) {
-      return res.status(403).json({ msg: 'Cuenta desactivada' });
+    if (!user || !user.status) {
+      return res.status(400).json({ msg: 'Credenciales inválidas o cuenta desactivada' });
     }
 
     const valid = await verify(user.password, password);
@@ -72,7 +91,9 @@ export const login = async (req, res) => {
   }
 };
 
-// Solicitar recuperación de contraseña
+/**
+ * Solicitar recuperación de contraseña
+ */
 export const requestPasswordReset = async (req, res) => {
   try {
     const { email } = req.body;
@@ -80,20 +101,20 @@ export const requestPasswordReset = async (req, res) => {
     if (!user) {
       return res.status(400).json({ msg: 'Email no registrado' });
     }
-    // Generar código de 6 dígitos
+
+    // Generar código y expiración
     const resetCode = crypto.randomInt(100000, 999999).toString();
-    // Expiración en 1 hora
     const expires = Date.now() + 3600 * 1000;
 
     user.passwordResetCode = resetCode;
-    user.passwordResetExpires = expires;
+    user.passwordResetExpires = new Date(expires);
     await user.save();
 
     // Enviar correo con el código
     await sendEmail({
       to: user.email,
       subject: 'Código para restablecer contraseña',
-      text: `Tu código para restablecer la contraseña es: ${resetCode}`
+      text: `Tu código es: ${resetCode}`
     });
 
     return res.status(200).json({ msg: 'Código enviado al email' });
@@ -103,23 +124,24 @@ export const requestPasswordReset = async (req, res) => {
   }
 };
 
-// Restablecer contraseña utilizando código
+/**
+ * Restablecer contraseña utilizando código
+ */
 export const resetPassword = async (req, res) => {
   try {
     const { email, code, newPassword } = req.body;
     const user = await User.findOne({
       email,
       passwordResetCode: code,
-      passwordResetExpires: { $gt: Date.now() }
+      passwordResetExpires: { $gt: new Date() }
     });
     if (!user) {
       return res.status(400).json({ msg: 'Código inválido o expirado' });
     }
-    // Encriptar nueva contraseña
+
     user.password = await hash(newPassword);
-    // Limpiar campos de reset
-    user.passwordResetCode = undefined;
-    user.passwordResetExpires = undefined;
+    user.passwordResetCode = null;
+    user.passwordResetExpires = null;
     await user.save();
 
     return res.status(200).json({ msg: 'Contraseña restablecida correctamente' });
@@ -129,7 +151,9 @@ export const resetPassword = async (req, res) => {
   }
 };
 
-// Crear un usuario por defecto para cada rol (ejecutar una sola vez)
+/**
+ * Crear un usuario por defecto para cada rol (ejecutar una sola vez)
+ */
 export const createDefaultUsers = async () => {
   const roles = [
     { key: 'ADMIN_GLOBAL', name: 'Super Admin Global', email: 'admin_global@correo.com' },
@@ -141,10 +165,7 @@ export const createDefaultUsers = async () => {
   for (const { key, name, email } of roles) {
     try {
       const exists = await User.exists({ role: key });
-      if (exists) {
-        console.log(`Usuario por defecto para rol ${key} ya existe.`);
-        continue;
-      }
+      if (exists) continue;
       const password = 'ChangeMe123!';
       const hashedPassword = await hash(password);
       const defaultUser = new User({
@@ -158,9 +179,9 @@ export const createDefaultUsers = async () => {
         status: true
       });
       await defaultUser.save();
-      console.log(`Usuario por defecto creado para rol ${key} (username: ${key.toLowerCase()}, password: ChangeMe123!).`);
+      console.log(`Usuario por defecto creado: ${key}`);
     } catch (err) {
-      console.error(`Error creando usuario por defecto para rol ${key}:`, err.message);
+      console.error(`Error creando user default ${key}:`, err);
     }
   }
 };

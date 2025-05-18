@@ -1,40 +1,61 @@
-import { Router } from 'express'
+// src/routes/auth.routes.js
+import { Router } from 'express';
 import {
   register,
   login,
   requestPasswordReset,
   resetPassword
-} from './auth.controller.js'
+} from './auth.controller.js';
 import {
   registerValidator,
   loginValidator,
   requestPasswordResetValidator,
   resetPasswordValidator
-} from '../middlewares/user-validators.js'
+} from '../middlewares/user-validators.js';
+import { uploadProfilePicture } from '../middlewares/multer-uploads.js';
 
-const router = Router()
+const router = Router();
 
 /**
  * @swagger
  * /register:
  *   post:
- *     summary: Registra un nuevo usuario
+ *     summary: Registra un nuevo usuario (con foto de perfil opcional)
  *     tags: [Auth]
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/UserRegister'
+ *             type: object
+ *             properties:
+ *               profilePicture:
+ *                 type: string
+ *                 format: binary
+ *               name:
+ *                 type: string
+ *               surname:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               role:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Usuario registrado exitosamente.
  */
 router.post(
   '/register',
+  uploadProfilePicture,
   registerValidator,
   register
-)
+);
 
 /**
  * @swagger
@@ -56,7 +77,7 @@ router.post(
   '/login',
   loginValidator,
   login
-)
+);
 
 /**
  * @swagger
@@ -82,7 +103,7 @@ router.post(
   '/request-password-reset',
   requestPasswordResetValidator,
   requestPasswordReset
-)
+);
 
 /**
  * @swagger
@@ -111,6 +132,6 @@ router.post(
   '/reset-password',
   resetPasswordValidator,
   resetPassword
-)
+);
 
-export default router
+export default router;

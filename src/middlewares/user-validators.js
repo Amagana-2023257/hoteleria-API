@@ -1,156 +1,106 @@
-import { body, param } from "express-validator";
-import { emailExists, usernameExists, userExists } from "../helpers/db-validators.js";
-import { validarCampos } from "./validate-fields.js";
-import { deleteFileOnError } from "./delete-file-on-error.js";
-import { handleErrors } from "./handle-errors.js";
-import { validateJWT } from "./validate-jwt.js";
-import { hasRoles } from "./validate-roles.js";
 
-export const registerValidator = [
-    // Nombre: requerido, máximo 50 caracteres
-    body('name')
-      .notEmpty().withMessage('El nombre es requerido')
-      .isLength({ max: 50 }).withMessage('El nombre no debe superar 50 caracteres'),
-  
-    // Apellido: requerido, máximo 50 caracteres
-    body('surname')
-      .notEmpty().withMessage('El apellido es requerido')
-      .isLength({ max: 50 }).withMessage('El apellido no debe superar 50 caracteres'),
-  
-    // Usuario: requerido, único
-    body('username')
-      .notEmpty().withMessage('El usuario es requerido')
-      .isLength({ min: 3, max: 30 }).withMessage('El usuario debe tener entre 3 y 30 caracteres')
-      .custom(usernameExists),
-  
-    // Email: requerido, formato válido, único
-    body('email')
-      .notEmpty().withMessage('El email es requerido')
-      .isEmail().withMessage('No es un email válido')
-      .custom(emailExists),
-  
-    // Contraseña: fuerza mínima
-    body('password')
-      .isStrongPassword({
-        minLength: 8,
-        minLowercase: 1,
-        minUppercase: 1,
-        minNumbers: 1,
-        minSymbols: 1
-      }).withMessage('La contraseña debe tener al menos 8 caracteres, incluyendo mayúscula, minúscula, número y símbolo'),
-  
-    // Teléfono: opcional, si viene debe ser 8 dígitos numéricos
-    body('phone')
-      .optional()
-      .matches(/^\d{8}$/).withMessage('El teléfono debe tener 8 dígitos numéricos'),
-  
-    // Después de validar campos, eliminar archivo subido en caso de error
-    validarCampos,
-    deleteFileOnError,
-    handleErrors
-  ]
+import { body, param } from 'express-validator';
+import { validarCampos } from './validate-fields.js';
+import { requireEmailOrUsername } from '../helpers/requireEmailOrUsername.js';
 
-export const loginValidator = [
-    body("email").optional().isEmail().withMessage("No es un email válido"),
-    body("username").optional().isString().withMessage("Username es en formáto erróneo"),
-    body("password").isLength({min: 4}).withMessage("El password debe contener al menos 8 caracteres"),
-    validarCampos,
-    handleErrors
-]
+// Validación para obtener todos los usuarios (no params)
+export const getUserValidator = [validarCampos];
 
+// Validación para obtener un usuario por ID
 export const getUserByIdValidator = [
-    validateJWT,
-    param("uid").isMongoId().withMessage("No es un ID válido de MongoDB"),
-    param("uid").custom(userExists),
-    hasRoles("ADMIN_GLOBAL"),
-    validarCampos,
-    handleErrors
-]
-
-export const getUserValidator = [
-    validateJWT,
-    //Utilizamos el metodo para validar o permitir varios roles.
-    hasRoles("ADMIN_GLOBAL"),
-    validarCampos,
-    handleErrors
-]
-
-export const updatePasswordValidator = [
-    validateJWT,
-    //Utilizamos el metodo para validar o permitir varios roles.
-    hasRoles("ADMIN_GLOBAL", "USER_ROLE"),
-    body("newPassword").isLength({min: 8}).withMessage("El password debe contener al menos 8 caracteres"),
-    validarCampos,
-    handleErrors
-]
-
-export const updateUserValidator = [
-    validateJWT,
-    //Utilizamos el metodo para validar o permitir varios roles.
-    hasRoles("ADMIN_GLOBAL", "USER_ROLE", "ADMIN_HOTEL", "ADMIN_SERVICE"),
-    validarCampos,
-    handleErrors
-]
-
-export const updateProfilePictureValidator = [
-    validateJWT,
-    //Utilizamos el metodo para validar o permitir varios roles.
-    hasRoles("ADMIN_GLOBAL", "USER_ROLE"),
-    validarCampos,
-    deleteFileOnError,
-    handleErrors
-]
-
-export const deleteValidator = [
-    validateJWT,
-    //Utilizamos el metodo para validar o permitir varios roles.
-    hasRoles("ADMIN_GLOBAL", "USER_ROLE", "ADMIN_HOTEL", "ADMIN_SERVICE"),
-    validarCampos,
-    handleErrors
-]
-
-export const updateOtherUserValidator = [
-    validateJWT,
-    param("uid").isMongoId().withMessage("No es un ID válido de MongoDB"),
-    param("uid").custom(userExists),
-    hasRoles("ADMIN_GLOBAL"),
-    body("email").custom(emailExists),
-    body("username").custom(usernameExists),
-    validarCampos,
-    handleErrors
-]
-
-export const deleteOtherUserValidator = [
-    validateJWT,
-    param("uid").isMongoId().withMessage("No es un ID válido de MongoDB"),
-    param("uid").custom(userExists),
-    hasRoles("ADMIN_GLOBAL"),
-    body("email").custom(emailExists),
-    body("username").custom(usernameExists),
-    validarCampos,
-    handleErrors
-]
-
-// Validator para solicitar restablecimiento de contraseña
-export const requestPasswordResetValidator = [
-    body('email')
-      .notEmpty().withMessage('El email es requerido')
-      .isEmail().withMessage('No es un email válido'),
-    validarCampos,
-    handleErrors
+  param('id').isMongoId().withMessage('ID de usuario inválido'),
+  validarCampos
 ];
 
-// Validator para restablecer contraseña con código
+// Validación para actualizar usuario
+export const updateUserValidator = [
+  param('id').isMongoId().withMessage('ID de usuario inválido'),
+  body('name')
+    .optional()
+    .isString().withMessage('El nombre debe ser texto')
+    .isLength({ max: 50 }).withMessage('El nombre no debe superar 50 caracteres'),
+  body('surname')
+    .optional()
+    .isString().withMessage('El apellido debe ser texto')
+    .isLength({ max: 50 }).withMessage('El apellido no debe superar 50 caracteres'),
+  body('email')
+    .optional()
+    .isEmail().withMessage('Formato de email inválido'),
+  body('phone')
+    .optional()
+    .isMobilePhone('any').withMessage('Teléfono inválido'),
+  body('role')
+    .optional()
+    .isIn(['ADMIN_GLOBAL','ADMIN_HOTEL','USER_ROLE','ADMIN_SERVICE'])
+    .withMessage('Rol no válido'),
+  validarCampos
+];
+
+// Validación para eliminar usuario (soft delete)
+export const deleteValidator = [
+  param('id').isMongoId().withMessage('ID de usuario inválido'),
+  validarCampos
+];
+
+// Validación para registrar usuario
+export const registerValidator = [
+  body('name')
+    .notEmpty().withMessage('El nombre es requerido')
+    .isLength({ max: 50 }).withMessage('El nombre no debe superar 50 caracteres'),
+  body('surname')
+    .notEmpty().withMessage('El apellido es requerido')
+    .isLength({ max: 50 }).withMessage('El apellido no debe superar 50 caracteres'),
+  body('email')
+    .notEmpty().withMessage('El email es requerido')
+    .isEmail().withMessage('Formato de email inválido'),
+  body('username')
+    .notEmpty().withMessage('El usuario es requerido'),
+  body('password')
+    .notEmpty().withMessage('La contraseña es requerida')
+    .isLength({ min: 8 }).withMessage('La contraseña debe tener al menos 8 caracteres'),
+  body('phone')
+    .optional()
+    .isMobilePhone('any').withMessage('Teléfono inválido'),
+  body('role')
+    .optional()
+    .isIn(['ADMIN_GLOBAL','ADMIN_HOTEL','USER_ROLE','ADMIN_SERVICE'])
+    .withMessage('Rol no válido'),
+  requireEmailOrUsername().withMessage('Debe enviar email o username'),
+  validarCampos
+];
+
+// Validación para login
+export const loginValidator = [
+  body('email')
+    .optional()
+    .isEmail().withMessage('Formato de email inválido'),
+  body('username')
+    .optional()
+    .isString().withMessage('El usuario debe ser texto'),
+  body('password')
+    .notEmpty().withMessage('La contraseña es requerida'),
+  requireEmailOrUsername().withMessage('Debe enviar email o username'),
+  validarCampos
+];
+
+// Validación para solicitar reset password
+export const requestPasswordResetValidator = [
+  body('email')
+    .notEmpty().withMessage('El email es requerido')
+    .isEmail().withMessage('Formato de email inválido'),
+  validarCampos
+];
+
+// Validación para reset password
 export const resetPasswordValidator = [
-    body('email')
-      .notEmpty().withMessage('El email es requerido')
-      .isEmail().withMessage('No es un email válido'),
-    body('code')
-      .notEmpty().withMessage('El código es requerido')
-      .isLength({ min: 6, max: 6 }).withMessage('El código debe tener 6 dígitos'),
-    body('newPassword')
-    .notEmpty()
-    .withMessage('La nueva contraseña es requerida'),
-    validarCampos,
-    handleErrors
+  body('email')
+    .notEmpty().withMessage('El email es requerido')
+    .isEmail().withMessage('Formato de email inválido'),
+  body('code')
+    .notEmpty().withMessage('El código es requerido')
+    .isLength({ min: 6, max: 6 }).withMessage('El código debe tener 6 dígitos'),
+  body('newPassword')
+    .notEmpty().withMessage('La nueva contraseña es requerida')
+    .isLength({ min: 8 }).withMessage('La nueva contraseña debe tener al menos 8 caracteres'),
+  validarCampos
 ];

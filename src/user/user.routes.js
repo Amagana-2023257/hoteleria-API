@@ -1,18 +1,21 @@
-import { Router } from 'express'
+// src/routes/user.routes.js
+import { Router } from 'express';
 import {
   getUsers,
   getUserById,
   updateUser,
   deleteUser
-} from './user.controller.js'
+} from './user.controller.js';
 import {
   getUserValidator,
   getUserByIdValidator,
   updateUserValidator,
   deleteValidator
-} from '../middlewares/user-validators.js'
+} from '../middlewares/user-validators.js';
+// Importar multer middleware
+import { uploadProfilePicture } from '../middlewares/multer-uploads.js';
 
-const router = Router()
+const router = Router();
 
 /**
  * @swagger
@@ -28,7 +31,7 @@ router.get(
   '/',
   getUserValidator,
   getUsers
-)
+);
 
 /**
  * @swagger
@@ -50,16 +53,16 @@ router.get(
  *         description: Usuario no encontrado
  */
 router.get(
-  '/:uid',
+  '/:id',
   getUserByIdValidator,
   getUserById
-)
+);
 
 /**
  * @swagger
  * /users/{uid}:
  *   put:
- *     summary: Actualiza datos de un usuario (excepto contraseña)
+ *     summary: Actualiza datos de un usuario (excepto contraseña) y foto de perfil
  *     tags: [Users]
  *     parameters:
  *       - in: path
@@ -71,9 +74,21 @@ router.get(
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
- *             $ref: '#/components/schemas/UserUpdate'
+ *             type: object
+ *             properties:
+ *               profilePicture:
+ *                 type: string
+ *                 format: binary
+ *               name:
+ *                 type: string
+ *               surname:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Usuario actualizado
@@ -81,10 +96,11 @@ router.get(
  *         description: Error de validación
  */
 router.put(
-  '/update/:uid',
+  '/update/:id',
+  uploadProfilePicture,           // middleware para subir foto
   updateUserValidator,
   updateUser
-)
+);
 
 /**
  * @swagger
@@ -109,6 +125,6 @@ router.delete(
   '/delete/:uid',
   deleteValidator,
   deleteUser
-)
+);
 
-export default router
+export default router;
