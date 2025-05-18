@@ -1,17 +1,15 @@
-// src/auth/auth.controller.js
 import { hash, verify } from 'argon2';
+import crypto from 'crypto';
 import User from '../user/user.model.js';
 import { generateJWT } from '../helpers/generate-jwt.js';
+import { sendEmail } from '../helpers/send-email.js';
 
+// Registrar un nuevo usuario (sin profilePicture)
 export const register = async (req, res) => {
   try {
-    const { name, surname, username, email, password, phone } = req.body;
-    const profilePicture = req.file?.filename ?? null;
-
-    // Encriptar la contraseña
+    const { name, surname, username, email, password, phone, role } = req.body;
     const hashedPassword = await hash(password);
 
-    // Crear usuario
     const user = await User.create({
       name,
       surname,
@@ -19,100 +17,152 @@ export const register = async (req, res) => {
       email,
       password: hashedPassword,
       phone,
-      profilePicture
+      role
     });
 
-    // Preparar datos a devolver (usa el método toJSON del esquema)
     const userDetails = user.toJSON();
     const token = await generateJWT(userDetails.id);
 
     return res.status(201).json({
-      msg: "Usuario registrado exitosamente",
+      msg: 'Usuario registrado exitosamente',
       userDetails: { token, user: userDetails }
     });
   } catch (err) {
-    console.error("Register error:", err);
-    return res.status(500).json({
-      msg: "User registration failed",
-      error: err.message
-    });
+    console.error('Register error:', err);
+    if (err.name === 'ValidationError') {
+      const messages = Object.values(err.errors).map(e => e.message);
+      return res.status(400).json({ msg: 'Error de validación', errors: messages });
+    }
+    if (err.code === 11000) {
+      const field = Object.keys(err.keyValue)[0];
+      return res.status(409).json({ msg: `El ${field} ya existe.` });
+    }
+    return res.status(500).json({ msg: 'Fallo en el registro', error: err.message });
   }
 };
 
+// Login de usuario
 export const login = async (req, res) => {
   const { email, username, password } = req.body;
   try {
-    // Buscar usuario por email o username
-    const user = await User.findOne({
-      $or: [{ email }, { username }]
-    });
+    const user = await User.findOne({ $or: [{ email }, { username }] });
     if (!user) {
-      return res.status(400).json({
-        msg: "Credenciales inválidas",
-        error: "No existe el usuario o correo ingresado"
-      });
+      return res.status(400).json({ msg: 'Credenciales inválidas' });
     }
 
-    // Verificar estado activo
     if (!user.status) {
-      return res.status(403).json({
-        msg: "Cuenta desactivada",
-        error: "Contacta al administrador"
-      });
+      return res.status(403).json({ msg: 'Cuenta desactivada' });
     }
 
-    // Validar contraseña
     const valid = await verify(user.password, password);
     if (!valid) {
-      return res.status(400).json({
-        msg: "Credenciales inválidas",
-        error: "Contraseña incorrecta"
-      });
+      return res.status(400).json({ msg: 'Credenciales inválidas' });
     }
 
-    // Preparar respuesta
     const userDetails = user.toJSON();
     const token = await generateJWT(userDetails.id);
 
     return res.status(200).json({
-      msg: "Login successful",
+      msg: 'Login exitoso',
       userDetails: { token, user: userDetails }
     });
   } catch (err) {
-    console.error("Login error:", err);
-    return res.status(500).json({
-      msg: "Login failed, server error",
-      error: err.message
-    });
+    console.error('Login error:', err);
+    return res.status(500).json({ msg: 'Error de servidor al iniciar sesión', error: err.message });
   }
 };
 
-// Crea un superadmin (ejecutar una sola vez)
-export const createAdmin = async () => {
+// Solicitar recuperación de contraseña
+export const requestPasswordReset = async (req, res) => {
   try {
-    const exists = await User.exists({ role: "ADMIN_GLOBAL" });
-    if (exists) {
-      console.log("Superadmin ya existe.");
-      return;
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ msg: 'Email no registrado' });
     }
+    // Generar código de 6 dígitos
+    const resetCode = crypto.randomInt(100000, 999999).toString();
+    // Expiración en 1 hora
+    const expires = Date.now() + 3600 * 1000;
 
-    const hashedPassword = await hash("ADMIN@123");
-    const superAdmin = new User({
-      name: "Super Admin",
-      surname: "Global",
-      username: "superadmin",
-      email: "superadmin@correo.com",
-      password: hashedPassword,
-      phone: "",
-      role: "ADMIN_GLOBAL",
-      status: true
+    user.passwordResetCode = resetCode;
+    user.passwordResetExpires = expires;
+    await user.save();
+
+    // Enviar correo con el código
+    await sendEmail({
+      to: user.email,
+      subject: 'Código para restablecer contraseña',
+      text: `Tu código para restablecer la contraseña es: ${resetCode}`
     });
 
-    await superAdmin.save();
-    console.log("Superadmin creado.");
+    return res.status(200).json({ msg: 'Código enviado al email' });
   } catch (err) {
-    console.error("Error creando superadmin:", err.message);
+    console.error('Request reset error:', err);
+    return res.status(500).json({ msg: 'Error solicitando restablecimiento de contraseña' });
   }
 };
 
-export default createAdmin;
+// Restablecer contraseña utilizando código
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, code, newPassword } = req.body;
+    const user = await User.findOne({
+      email,
+      passwordResetCode: code,
+      passwordResetExpires: { $gt: Date.now() }
+    });
+    if (!user) {
+      return res.status(400).json({ msg: 'Código inválido o expirado' });
+    }
+    // Encriptar nueva contraseña
+    user.password = await hash(newPassword);
+    // Limpiar campos de reset
+    user.passwordResetCode = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save();
+
+    return res.status(200).json({ msg: 'Contraseña restablecida correctamente' });
+  } catch (err) {
+    console.error('Reset password error:', err);
+    return res.status(500).json({ msg: 'Error restableciendo la contraseña' });
+  }
+};
+
+// Crear un usuario por defecto para cada rol (ejecutar una sola vez)
+export const createDefaultUsers = async () => {
+  const roles = [
+    { key: 'ADMIN_GLOBAL', name: 'Super Admin Global', email: 'admin_global@correo.com' },
+    { key: 'ADMIN_HOTEL', name: 'Super Admin Hotel', email: 'admin_hotel@correo.com' },
+    { key: 'ADMIN_SERVICE', name: 'Super Admin Servicio', email: 'admin_service@correo.com' },
+    { key: 'USER_ROLE', name: 'Usuario Default', email: 'user_default@correo.com' }
+  ];
+
+  for (const { key, name, email } of roles) {
+    try {
+      const exists = await User.exists({ role: key });
+      if (exists) {
+        console.log(`Usuario por defecto para rol ${key} ya existe.`);
+        continue;
+      }
+      const password = 'ChangeMe123!';
+      const hashedPassword = await hash(password);
+      const defaultUser = new User({
+        name,
+        surname: 'Default',
+        username: key.toLowerCase(),
+        email,
+        password: hashedPassword,
+        phone: '',
+        role: key,
+        status: true
+      });
+      await defaultUser.save();
+      console.log(`Usuario por defecto creado para rol ${key} (username: ${key.toLowerCase()}, password: ChangeMe123!).`);
+    } catch (err) {
+      console.error(`Error creando usuario por defecto para rol ${key}:`, err.message);
+    }
+  }
+};
+
+export default createDefaultUsers;

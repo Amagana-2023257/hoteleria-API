@@ -12,6 +12,7 @@ import roomRoutes from "../src/room/room.routes.js"
 import eventRoutes from "../src/event/event.routes.js";
 import reservationRoutes from "../src/reservation/reservation.routes.js"
 import apiLimiter from "../src/middlewares/rate-limit-validator.js"
+import createDefaultUsers from "../src/auth/auth.controller.js";
 
 import { swaggerDocs, swaggerUi } from "./swagger.js"
 
@@ -62,6 +63,7 @@ export const initServer = () => {
     try {
         middlewares(app)
         conectarDB()
+        createDefaultUsers()
         routes(app)
         app.listen(process.env.PORT)
         console.log(`Server running on port ${process.env.PORT}`)

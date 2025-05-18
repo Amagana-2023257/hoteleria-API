@@ -8,30 +8,37 @@ import {
   deleteHotel
 } from './hotel.controller.js';
 import { validateJWT } from '../middlewares/validate-jwt.js';
-import { hasRoles }    from '../middlewares/validate-roles.js';
+import { hasRoles } from '../middlewares/validate-roles.js';
 import {
   createHotelValidator,
   updateHotelValidator,
-getHotelValidator
+  getHotelValidator
 } from '../middlewares/hotel-validators.js';
+import { uploadHotelImages } from '../middlewares/multer-uploads.js';
 
 const hotelRouter = Router();
 
-// Creación, actualización y eliminación solo ADMIN_GLOBAL
+// ADMIN_GLOBAL: crear + subir imágenes
 hotelRouter.post(
   '/createHotel',
   validateJWT,
   hasRoles('ADMIN_GLOBAL'),
+  uploadHotelImages,
   createHotelValidator,
   createHotel
 );
+
+// ADMIN_GLOBAL: actualizar + nuevas imágenes
 hotelRouter.put(
   '/updateHotel/:id',
   validateJWT,
   hasRoles('ADMIN_GLOBAL'),
+  uploadHotelImages,
   updateHotelValidator,
   updateHotel
 );
+
+// ADMIN_GLOBAL: eliminar
 hotelRouter.delete(
   '/deleteHotel/:id',
   validateJWT,
@@ -40,13 +47,14 @@ hotelRouter.delete(
   deleteHotel
 );
 
-// Cualquiera con sesión (usuarios y admins) puede listar y ver
+// Cualquiera con sesión
 hotelRouter.get(
   '/getHotels',
   validateJWT,
   hasRoles('ADMIN_GLOBAL','ADMIN_HOTEL','ADMIN_SERVICE','USER_ROLE'),
   getHotels
 );
+
 hotelRouter.get(
   '/getHotel/:id',
   validateJWT,

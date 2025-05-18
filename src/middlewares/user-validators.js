@@ -130,3 +130,27 @@ export const deleteOtherUserValidator = [
     validarCampos,
     handleErrors
 ]
+
+// Validator para solicitar restablecimiento de contraseña
+export const requestPasswordResetValidator = [
+    body('email')
+      .notEmpty().withMessage('El email es requerido')
+      .isEmail().withMessage('No es un email válido'),
+    validarCampos,
+    handleErrors
+];
+
+// Validator para restablecer contraseña con código
+export const resetPasswordValidator = [
+    body('email')
+      .notEmpty().withMessage('El email es requerido')
+      .isEmail().withMessage('No es un email válido'),
+    body('code')
+      .notEmpty().withMessage('El código es requerido')
+      .isLength({ min: 6, max: 6 }).withMessage('El código debe tener 6 dígitos'),
+    body('newPassword')
+    .notEmpty()
+    .withMessage('La nueva contraseña es requerida'),
+    validarCampos,
+    handleErrors
+];

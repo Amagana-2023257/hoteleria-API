@@ -624,206 +624,110 @@
 			]
 		},
 		{
-			"name": "Hotel",
-			"item": [
-				{
-					"name": "Post Hotel",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2ODE2YWEwNzkxNTEzM2M2ZGRmMjBmOWEiLCJuYW1lIjoiQWRtaW4iLCJyb2xlIjoiQURNSU5fR0xPQkFMIiwiaWF0IjoxNzQ2MzE1ODAzLCJleHAiOjE3NDYzMTk0MDN9.yB3HdX4S5vC9Wc1go2uwdvZsaGJ_fboAaWMZrDldK3M",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n\"name\":\"Hotel2\",\r\n\"address\":\"12 avenida 6calle\",\r\n\"category\": \"5 stars\",\r\n\"description\": \"Descripcion de hotel.\",\r\n\"phone\": \"77777777\",\r\n\"email\": \"hotel22@gmail.com\"\r\n\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://127.0.0.1:3001/hotelManager/v1/hotel/post",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3001",
-							"path": [
-								"hotelManager",
-								"v1",
-								"hotel",
-								"post"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Put hotel",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2ODA4OTdmNTIwMGM3MjgwYmZhOGM2YTMiLCJpYXQiOjE3NDU2MzEzODMsImV4cCI6MTc0NTYzNDk4M30.EKEVCZE_cswEpAgrZEQzC5Y5rfqLGT4RO12labo6fpg",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n\"name\":\"HotelEdit\",\r\n\"address\":\"12 avenida 6calleE\",\r\n\"category\": \"5 stars\",\r\n\"description\": \"Descripcion de hotel Edit.\",\r\n\"phone\": \"58496516\",\r\n\"email\": \"hotelE@gmail.com\"\r\n\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://127.0.0.1:3001/hotelManager/v1/hotel/putHotel/680c39970d2d0f1a13762af9",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3001",
-							"path": [
-								"hotelManager",
-								"v1",
-								"hotel",
-								"putHotel",
-								"680c39970d2d0f1a13762af9"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Listar hoteles",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2ODA4OTdmNTIwMGM3MjgwYmZhOGM2YTMiLCJpYXQiOjE3NDU3MDEzODAsImV4cCI6MTc0NTcwNDk4MH0.VOJD6xo_bYhncwT3dXjrxVJMB_g1JExZGc0tFzfdUgw",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://127.0.0.1:3001/hotelManager/v1/hotel/getHotel",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3001",
-							"path": [
-								"hotelManager",
-								"v1",
-								"hotel",
-								"getHotel"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Listar hoteles por id",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2ODBjMzg2NTk0YjA0NmEwM2Y5OTQxMWUiLCJpYXQiOjE3NDU2MzEzMzUsImV4cCI6MTc0NTYzNDkzNX0.hWLNqSfP-NT3dcHLFmJYl403Mkqoa-OFffA2IYwd77k",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://127.0.0.1:3001/hotelManager/v1/hotel/getHotel/680c39970d2d0f1a13762af9",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3001",
-							"path": [
-								"hotelManager",
-								"v1",
-								"hotel",
-								"getHotel",
-								"680c39970d2d0f1a13762af9"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Eliminar Hotel",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI2ODA4OTdmNTIwMGM3MjgwYmZhOGM2YTMiLCJpYXQiOjE3NDU2MzUyMjIsImV4cCI6MTc0NTYzODgyMn0.vTOAezvm_xbP8IZvWDK7oJtPfE1y4vU0YsKXQtoQJ20",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "http://127.0.0.1:3001/hotelManager/v1/hotel/deleteHotel/680c39970d2d0f1a13762af9",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "3001",
-							"path": [
-								"hotelManager",
-								"v1",
-								"hotel",
-								"deleteHotel",
-								"680c39970d2d0f1a13762af9"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
+  "name": "Hotel",
+  "item": [
+    {
+      "name": "Crear Hotel",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{jwt_token}}", "type": "string" }] },
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Hotel Ejemplo\",\n  \"location\": \"Ciudad\",\n  \"address\": \"Av. Principal #123\",\n  \"category\": \"Standard\",\n  \"price\": 850,\n  \"amenities\": [\"WiFi\",\"Piscina\"],\n  \"images\": [\"/uploads/hotels/foto1.jpg\"],\n  \"rating\": 4.2,\n  \"availableRooms\": 10\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:3001/hotelManager/v1/hotel/createHotel",
+          "protocol": "http",
+          "host": ["127","0","0","1"],
+          "port": "3001",
+          "path": ["hotelManager","v1","hotel","createHotel"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Listar Hoteles",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{jwt_token}}", "type": "string" }] },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:3001/hotelManager/v1/hotel/getHotels?location=Ciudad&category=Standard&minPrice=500&maxPrice=1000&minRating=3",
+          "protocol": "http",
+          "host": ["127","0","0","1"],
+          "port": "3001",
+          "path": ["hotelManager","v1","hotel","getHotels"],
+          "query": [
+            { "key": "location", "value": "Ciudad" },
+            { "key": "category", "value": "Standard" },
+            { "key": "minPrice", "value": "500" },
+            { "key": "maxPrice", "value": "1000" },
+            { "key": "minRating", "value": "3" }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Obtener Hotel por ID",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{jwt_token}}", "type": "string" }] },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:3001/hotelManager/v1/hotel/getHotel/:id",
+          "protocol": "http",
+          "host": ["127","0","0","1"],
+          "port": "3001",
+          "path": ["hotelManager","v1","hotel","getHotel", "{{hotelId}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Actualizar Hotel",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{jwt_token}}", "type": "string" }] },
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"price\": 900,\n  \"availableRooms\": 8\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:3001/hotelManager/v1/hotel/updateHotel/:id",
+          "protocol": "http",
+          "host": ["127","0","0","1"],
+          "port": "3001",
+          "path": ["hotelManager","v1","hotel","updateHotel", "{{hotelId}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Eliminar Hotel",
+      "request": {
+        "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{jwt_token}}", "type": "string" }] },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:3001/hotelManager/v1/hotel/deleteHotel/:id",
+          "protocol": "http",
+          "host": ["127","0","0","1"],
+          "port": "3001",
+          "path": ["hotelManager","v1","hotel","deleteHotel", "{{hotelId}}"]
+        }
+      },
+      "response": []
+    }
+  ]
+},
+
 		{
 			"name": "Room",
 			"item": [
