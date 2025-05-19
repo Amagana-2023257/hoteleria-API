@@ -38,7 +38,7 @@ export const updateUserValidator = [
 
 // Validación para eliminar usuario (soft delete)
 export const deleteValidator = [
-  param('id').isMongoId().withMessage('ID de usuario inválido'),
+  param('uid').isMongoId().withMessage('ID de usuario inválido'),
   validarCampos
 ];
 

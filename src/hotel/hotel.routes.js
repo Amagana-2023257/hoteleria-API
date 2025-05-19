@@ -65,13 +65,5 @@ hotelRouter.get(
   getHotelById
 );
 
-// Consultar habitaciones de un hotel
-hotelRouter.get(
-  '/hoteles/:id/habitaciones',
-  validateJWT,
-  hasRoles('ADMIN_GLOBAL','ADMIN_HOTEL','ADMIN_SERVICE','USER_ROLE'),
-  getHotelValidator,
-  (req, res) => require('../room/room.controller.js').getRoomsByHotel(req, res)
-);
 
 export default hotelRouter;

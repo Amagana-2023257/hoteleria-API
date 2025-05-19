@@ -1,4 +1,4 @@
-// src/room/room.controller.js
+// src/controllers/room.controller.js
 import Room from './room.model.js';
 
 /**
@@ -13,23 +13,24 @@ export const createRoom = async (req, res) => {
       capacity,
       price,
       availability = 'available',
-      availabilityDate,
+      availabilityDate
     } = req.body;
 
     // Validación de campos obligatorios
     const missing = [];
     if (!hotel) missing.push('hotel');
-    if (!type) missing.push('type');
-    if (capacity == null) missing.push('capacity');
-    if (price == null) missing.push('price');
-    if (!availabilityDate) missing.push('availabilityDate');
+    if (!type)   missing.push('type');
+    if (capacity == null)        missing.push('capacity');
+    if (price == null)           missing.push('price');
+    if (!availabilityDate)       missing.push('availabilityDate');
     if (missing.length) {
       return res.status(400).json({
         message: 'Faltan campos obligatorios',
-        missingFields: missing,
+        missingFields: missing
       });
     }
 
+    // Crear la habitación
     const room = await Room.create({
       hotel,
       type: type.trim(),
@@ -37,14 +38,16 @@ export const createRoom = async (req, res) => {
       capacity: Number(capacity),
       price: Number(price),
       availability,
-      availabilityDate: new Date(availabilityDate),
+      availabilityDate: new Date(availabilityDate)
     });
+
+    // Poblamos TODO el hotel para la respuesta
+    await room.populate('hotel');
 
     return res.status(201).json({ message: 'Habitación creada', room });
   } catch (err) {
     console.error('Error al crear habitación:', err);
     if (err.name === 'ValidationError') {
-      // Recolectar errores de validación de Mongoose
       const errors = Object.values(err.errors).map(e => e.message);
       return res.status(400).json({ message: 'Error de validación', errors });
     }
@@ -57,7 +60,10 @@ export const createRoom = async (req, res) => {
  */
 export const getRooms = async (req, res) => {
   try {
-    const rooms = await Room.find().populate('hotel', 'name location');
+    const rooms = await Room
+      .find()
+      .populate('hotel');  // Poblamos TODO el hotel
+
     return res.status(200).json({ message: 'Habitaciones obtenidas', rooms });
   } catch (err) {
     console.error('Error al obtener habitaciones:', err);
@@ -71,7 +77,10 @@ export const getRooms = async (req, res) => {
 export const getRoomById = async (req, res) => {
   try {
     const { id } = req.params;
-    const room = await Room.findById(id).populate('hotel', 'name location');
+    const room = await Room
+      .findById(id)
+      .populate('hotel');
+
     if (!room) {
       return res.status(404).json({ message: 'Habitación no encontrada' });
     }
@@ -88,11 +97,19 @@ export const getRoomById = async (req, res) => {
 export const updateRoom = async (req, res) => {
   try {
     const { id } = req.params;
-    const updates = req.body;
-    const room = await Room.findByIdAndUpdate(id, updates, {
-      new: true,
-      runValidators: true,
-    }).populate('hotel', 'name location');
+    const updates = { ...req.body };
+
+    // Eliminar campos undefined para no sobrescribirlos
+    Object.keys(updates).forEach(key => {
+      if (updates[key] === undefined) delete updates[key];
+    });
+
+    const room = await Room
+      .findByIdAndUpdate(id, updates, {
+        new: true,
+        runValidators: true
+      })
+      .populate('hotel');
 
     if (!room) {
       return res.status(404).json({ message: 'Habitación no encontrada' });
@@ -129,9 +146,12 @@ export const deleteRoom = async (req, res) => {
  * Obtener habitaciones por hotel
  */
 export const getRoomsByHotel = async (req, res) => {
-  const { hotelId } = req.params;
   try {
-    const rooms = await Room.find({ hotel: hotelId }).populate('hotel', 'name location');
+    const { id } = req.params;
+    const rooms = await Room
+      .find({ hotel: id })
+      .populate('hotel');
+
     return res.status(200).json({ message: 'Habitaciones por hotel obtenidas', rooms });
   } catch (err) {
     console.error('Error al obtener habitaciones por hotel:', err);
