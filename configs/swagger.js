@@ -9,8 +9,8 @@ const swaggerOptions = {
             version: "1.0.0",
             description: "API para gestion de hoteles.",
             contact: {
-                name: "Josue Garcia",
-                email: "jgarcia-2023324@kinal.org.gt"
+                name: "Angel Magaña",
+                email: "amagana_2023257@kinal.org.gt"
             }
         },
         servers: [

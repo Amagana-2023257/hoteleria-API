@@ -1,4 +1,4 @@
-// src/event/event.routes.js
+// src/routes/event.routes.js
 import { Router } from 'express';
 import {
   createEvent,
@@ -6,7 +6,7 @@ import {
   getEventById,
   updateEvent,
   deleteEvent
-} from './event.controller.js';
+} from '../event/event.controller.js';
 import { validateJWT } from '../middlewares/validate-jwt.js';
 import { hasRoles } from '../middlewares/validate-roles.js';
 import {
@@ -17,7 +17,57 @@ import {
 
 const eventRouter = Router();
 
-// ADMIN_SERVICE o ADMIN_HOTEL: gestionar eventos
+/**
+ * @swagger
+ * tags:
+ *   name: Event
+ *   description: Endpoints para gestión de eventos
+ */
+
+/**
+ * @swagger
+ * /eventos:
+ *   post:
+ *     summary: Crear un nuevo evento para un hotel
+ *     tags: [Event]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - hotel
+ *               - name
+ *               - startDate
+ *               - endDate
+ *             properties:
+ *               hotel:
+ *                 type: string
+ *                 description: ObjectId del hotel
+ *               name:
+ *                 type: string
+ *                 description: Nombre del evento
+ *               description:
+ *                 type: string
+ *               startDate:
+ *                 type: string
+ *                 format: date-time
+ *               endDate:
+ *                 type: string
+ *                 format: date-time
+ *               resources:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       201:
+ *         description: Evento creado exitosamente.
+ *       400:
+ *         description: Error de validación o fechas inválidas.
+ */
 eventRouter.post(
   '/eventos',
   validateJWT,
@@ -26,6 +76,52 @@ eventRouter.post(
   createEvent
 );
 
+/**
+ * @swagger
+ * /eventos/{id}:
+ *   put:
+ *     summary: Actualizar un evento existente
+ *     tags: [Event]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del evento a actualizar
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               hotel:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               startDate:
+ *                 type: string
+ *                 format: date-time
+ *               endDate:
+ *                 type: string
+ *                 format: date-time
+ *               resources:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Evento actualizado correctamente.
+ *       400:
+ *         description: Error de validación o fechas inválidas.
+ *       404:
+ *         description: Evento no encontrado.
+ */
 eventRouter.put(
   '/eventos/:id',
   validateJWT,
@@ -34,6 +130,27 @@ eventRouter.put(
   updateEvent
 );
 
+/**
+ * @swagger
+ * /eventos/{id}:
+ *   delete:
+ *     summary: Eliminar un evento
+ *     tags: [Event]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del evento a eliminar
+ *     responses:
+ *       200:
+ *         description: Evento eliminado correctamente.
+ *       404:
+ *         description: Evento no encontrado.
+ */
 eventRouter.delete(
   '/eventos/:id',
   validateJWT,
@@ -42,7 +159,18 @@ eventRouter.delete(
   deleteEvent
 );
 
-// Todos con sesión: listar y detalle de eventos
+/**
+ * @swagger
+ * /eventos:
+ *   get:
+ *     summary: Listar todos los eventos
+ *     tags: [Event]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista de eventos obtenida.
+ */
 eventRouter.get(
   '/eventos',
   validateJWT,
@@ -50,6 +178,27 @@ eventRouter.get(
   getEvents
 );
 
+/**
+ * @swagger
+ * /eventos/{id}:
+ *   get:
+ *     summary: Obtener un evento por su ID
+ *     tags: [Event]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del evento
+ *     responses:
+ *       200:
+ *         description: Evento encontrado.
+ *       404:
+ *         description: Evento no encontrado.
+ */
 eventRouter.get(
   '/eventos/:id',
   validateJWT,
