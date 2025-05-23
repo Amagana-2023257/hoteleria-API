@@ -147,11 +147,11 @@ export const deleteRoom = async (req, res) => {
  */
 export const getRoomsByHotel = async (req, res) => {
   try {
-    const { id } = req.params;
-    const rooms = await Room
-      .find({ hotel: id })
-      .populate('hotel');
-
+    const { hotelId } = req.params;
+    if (!hotelId) {
+      return res.status(400).json({ message: 'Se requiere el ID de hotel' });
+    }
+    const rooms = await Room.find({ hotel: hotelId }).populate({ path: 'hotel', select: 'name location' });
     return res.status(200).json({ message: 'Habitaciones por hotel obtenidas', rooms });
   } catch (err) {
     console.error('Error al obtener habitaciones por hotel:', err);

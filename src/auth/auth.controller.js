@@ -166,7 +166,7 @@ export const createDefaultUsers = async () => {
     try {
       const exists = await User.exists({ role: key });
       if (exists) continue;
-      const password = 'passwordStrong1';
+      const password = 'Chinito2,000';
       const hashedPassword = await hash(password);
       const defaultUser = new User({
         name,

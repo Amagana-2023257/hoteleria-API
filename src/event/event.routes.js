@@ -173,8 +173,6 @@ eventRouter.delete(
  */
 eventRouter.get(
   '/eventos',
-  validateJWT,
-  hasRoles('ADMIN_GLOBAL','ADMIN_HOTEL','ADMIN_SERVICE','USER_ROLE'),
   getEvents
 );
 

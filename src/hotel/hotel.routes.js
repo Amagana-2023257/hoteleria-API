@@ -218,8 +218,6 @@ hotelRouter.delete(
  */
 hotelRouter.get(
   '/hoteles',
-  validateJWT,
-  hasRoles('ADMIN_GLOBAL','ADMIN_HOTEL','ADMIN_SERVICE','USER_ROLE'),
   getHotels
 );
 
